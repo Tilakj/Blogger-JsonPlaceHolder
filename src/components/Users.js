@@ -8,6 +8,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from '@material-ui/core/Avatar'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import { Link } from 'react-router-dom'
+import Typography from '@material-ui/core/Typography'
 
 export class Users extends Component {
     constructor(props) {
@@ -32,14 +33,14 @@ export class Users extends Component {
     render() {
         const { isLoading, users } = this.state
         return (
-            <div >
+            <div>
                 {
                     <>
                         {isLoading && <LinearProgress variant="query" color="primary" />}
                         <List
                             component="nav"
                             aria-labelledby="nested-list-subheader"
-                            subheader={<h3>USERS LIST : {users.length}</h3>}>
+                            subheader={<Typography style={{ marginLeft: 20 }} variant="h5" component="h2">USERS LIST : {users.length}</Typography>}>
                             {
                                 users.map(user => {
                                     return (

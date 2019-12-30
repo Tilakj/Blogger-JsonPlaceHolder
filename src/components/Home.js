@@ -34,7 +34,7 @@ class Home extends React.Component {
         const { users, posts } = this.state
         return (
             <div className="row">
-                <Typography style={{ marginLeft: 20 }} variant="title"  component="h2">Dashboard</Typography>
+                <Typography style={{ marginLeft: 20 }} variant="h5"  component="h2">Dashboard</Typography>
                 <Card className={`col-md-3 ${classes.card}`} >
                     {users.isLoading && <LinearProgress variant="query" color="primary" />}
                     <CardActionArea component={Link} to={'/users'}>
