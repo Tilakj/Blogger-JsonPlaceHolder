@@ -53,14 +53,11 @@ export default function App() {
                 <SideMenuBar open={open} handleDrawerClose={handleDrawerClose} menus={menus} />
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
-
                     <Route path="/home" component={Home} />
                     <Route path="/users" component={Users} exact={true} />
                     <Route path="/posts" component={Posts} exact={true} />
-                    <Route path="/users:id" component={UserShowPage} />
-                    <Route path="/posts:id" component={PostShowPage} />
-
-
+                    <Route path="/users/:id" component={UserShowPage} />
+                    <Route path="/posts/:id" component={PostShowPage} />
                     <Route render={() => <Redirect to={{ pathname: "/home" }} />} />
 
                 </main>

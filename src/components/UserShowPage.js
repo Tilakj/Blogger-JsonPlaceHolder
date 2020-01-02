@@ -36,7 +36,7 @@ export class UserShowPage extends Component {
     };
     componentDidMount = () => {
         const id = this.props.match.params.id
-        Axios.get(USERS_URL + `\\${id}`)
+        Axios.get(USERS_URL + `/${id}`)
             .then(response => {
                 this.setState({ user: response.data, isLoading: false }, () => {
                     Axios.get(POSTS_URL)
@@ -55,7 +55,7 @@ export class UserShowPage extends Component {
         const { isLoading, user, userPosts } = this.state
         return (
             <>
-                <Typography style={{ marginLeft: 20 }} variant="title" component="h2">User Show Page</Typography>
+                <Typography style={{ marginLeft: 20 }} variant="subtitle1" component="h2">User Show Page</Typography>
                 {isLoading && <LinearProgress variant="query" color="primary" />}
                 <Card raised className={this.props.classes.UserShowCard}>
                     <CardHeader

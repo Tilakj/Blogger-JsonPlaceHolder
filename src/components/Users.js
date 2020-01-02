@@ -44,7 +44,7 @@ export class Users extends Component {
                             {
                                 users.map(user => {
                                     return (
-                                        <ListItem key={user.id} button component={Link} to={`/users\\${user.id}`}>
+                                        <ListItem key={user.id} button component={Link} to={`/users/${user.id}`}>
                                             <ListItemIcon>
                                                 <Avatar style={{ backgroundColor: '#3F51B5', color: 'white' }}>{user.name.charAt(0)}</Avatar>
                                             </ListItemIcon>

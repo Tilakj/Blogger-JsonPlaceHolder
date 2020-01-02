@@ -37,21 +37,22 @@ export class PostShowPage extends Component {
     };
     componentDidMount = () => {
 
-        const postId = Number(this.props.match.params.id.substr(1))
-        Axios.get(POSTS_URL + `\\${postId}`)
+        const postId = Number(this.props.match.params.id)
+
+        Axios.get(POSTS_URL + `/${postId}`)
             .then(response => {
                 this.setState({ post: response.data }, () => {
 
 
-                    Axios.get(USERS_URL + `\\${response.data.userId}`)
+                    Axios.get(USERS_URL + `/${this.state.post.userId}`)
                         .then(response => {
                             this.setState({ user: response.data }, () => {
 
-
+                               
                                 Axios.get(COMMENTS_URL)
                                     .then(response => {
                                         const postComments = response.data.filter(comment => comment.postId === postId)
-                                        this.setState({ postComments,isLoading:false })
+                                        this.setState({ postComments, isLoading: false })
                                     })
                                     .catch(err => {
                                         alert(err)
@@ -74,7 +75,7 @@ export class PostShowPage extends Component {
         const { isLoading, post, user, postComments } = this.state
         return (
             <div>
-                <Typography style={{ marginLeft: 20 }} variant="title"  component="h2">Post Show Page</Typography>
+                <Typography style={{ marginLeft: 20 }} variant="subtitle1" component="h2">Post Show Page</Typography>
                 {isLoading && <LinearProgress variant="query" color="primary" />}
                 <Card raised className={this.props.classes.UserShowCard}>
                     <CardHeader
@@ -104,7 +105,7 @@ export class PostShowPage extends Component {
                     </CardActions>
 
                     <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
-                        <ul style={{ padding:'0px 30px',paddingBottom: '30px' ,marginLeft:20 }}>
+                        <ul style={{ padding: '0px 30px', paddingBottom: '30px', marginLeft: 20 }}>
                             {
                                 postComments.map(comment => {
                                     return <li key={comment.id}>{comment.body}</li>
@@ -113,7 +114,7 @@ export class PostShowPage extends Component {
                         </ul>
                     </Collapse>
                 </Card>
-                <Button variant="contained" color="primary" style={{marginLeft:20, marginTop: 20 }}component={Link}to={`/users\\${user.id}`}>More posts of {user.name}</Button>
+                <Button variant="contained" color="primary" style={{ marginLeft: 20, marginTop: 20 }} component={Link} to={`/users/${user.id}`}>More posts of {user.name}</Button>
 
             </div>
         )

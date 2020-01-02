@@ -15,7 +15,7 @@ function ListPosts(props) {
                 props.posts.map(post => {
                     return (
                         <Card key={post.id}  className={props.classes.UserShowCard}>
-                            <CardActionArea component={Link} to={`/posts\\${post.id}`}>
+                            <CardActionArea component={Link} to={`/posts/${post.id}`}>
                                 <CardHeader color="textPrimary"
                                     subheader={`Title : ${post.title}`}
                                 />
