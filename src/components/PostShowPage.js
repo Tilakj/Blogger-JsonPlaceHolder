@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-import Axios from 'axios'
-import { POSTS_URL, USERS_URL, COMMENTS_URL } from './Constants'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
@@ -16,15 +14,16 @@ import { withStyles } from '@material-ui/core/styles';
 import { HOCStyles } from '../HOCStyles'
 import CardContent from '@material-ui/core/CardContent';
 import { Button } from '@material-ui/core';
+import { getUserByIdSelector, getPostByIdSelector } from '../redux/selectors/selectors';
+import axios from '../config/axios';
+import { connect } from 'react-redux'
 
 
 export class PostShowPage extends Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
 
         this.state = {
-            user: {},
-            post: {},
             expanded: true,
             postComments: [],
             isLoading: true
@@ -36,35 +35,10 @@ export class PostShowPage extends Component {
         this.setState({ expanded });
     };
     componentDidMount = () => {
-
-        const postId = Number(this.props.match.params.id)
-
-        Axios.get(POSTS_URL + `/${postId}`)
+        axios.get('/comments')
             .then(response => {
-                this.setState({ post: response.data }, () => {
-
-
-                    Axios.get(USERS_URL + `/${this.state.post.userId}`)
-                        .then(response => {
-                            this.setState({ user: response.data }, () => {
-
-                               
-                                Axios.get(COMMENTS_URL)
-                                    .then(response => {
-                                        const postComments = response.data.filter(comment => comment.postId === postId)
-                                        this.setState({ postComments, isLoading: false })
-                                    })
-                                    .catch(err => {
-                                        alert(err)
-                                    })
-
-                            })
-                        })
-                        .catch(err => {
-                            alert(err)
-                        })
-                })
-
+                const postComments = response.data.filter(comment => comment.postId === this.props.post.id)
+                this.setState({ postComments, isLoading: false })
             })
             .catch(err => {
                 alert(err)
@@ -72,10 +46,11 @@ export class PostShowPage extends Component {
     }
 
     render() {
-        const { isLoading, post, user, postComments } = this.state
+        const { isLoading, postComments, expanded } = this.state
+        const { post, user } = this.props
         return (
             <div>
-                <Typography style={{ marginLeft: 20 }} variant="subtitle1" component="h2">Post Show Page</Typography>
+                <Typography style={{ marginLeft: 20 }} variant="h5"  >Post Show Page</Typography>
                 {isLoading && <LinearProgress variant="query" color="primary" />}
                 <Card raised className={this.props.classes.UserShowCard}>
                     <CardHeader
@@ -94,17 +69,17 @@ export class PostShowPage extends Component {
                         <Typography style={{ marginLeft: 20 }} variant="body2" color="textPrimary" component="h2">Comments</Typography>
                         <IconButton
                             className={clsx(this.props.classes.expand, {
-                                [this.props.classes.expandOpen]: this.state.expanded,
+                                [this.props.classes.expandOpen]: expanded,
                             })}
                             onClick={this.handleExpandClick}
-                            aria-expanded={this.state.expanded}
+                            aria-expanded={expanded}
                             aria-label="show more">
 
                             <ExpandMoreIcon />
                         </IconButton>
                     </CardActions>
 
-                    <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+                    <Collapse in={expanded} timeout="auto" unmountOnExit>
                         <ul style={{ padding: '0px 30px', paddingBottom: '30px', marginLeft: 20 }}>
                             {
                                 postComments.map(comment => {
@@ -121,4 +96,13 @@ export class PostShowPage extends Component {
     }
 }
 
-export default withStyles(HOCStyles)(PostShowPage);
+const mapStateToProps = (state, props) => {
+    const post = getPostByIdSelector(state.posts.posts, Number(props.match.params.id))
+    console.log(post)
+    return {
+        post,
+        user: getUserByIdSelector(state.users.users, post.userId),
+    }
+
+}
+export default connect(mapStateToProps)(withStyles(HOCStyles)(PostShowPage));

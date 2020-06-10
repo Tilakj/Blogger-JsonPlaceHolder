@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import Axios from 'axios'
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -12,21 +11,18 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { withStyles } from '@material-ui/core/styles';
 import { HOCStyles } from '../HOCStyles'
-import { USERS_URL } from './Constants'
-import { POSTS_URL } from './Constants'
 import ListPost from './ListPosts'
-
-
+import { connect } from 'react-redux'
+import { getUserByIdSelector, getUserPostsSelector } from '../redux/selectors/selectors'
+import { Button } from '@material-ui/core';
+import { Link } from 'react-router-dom'
 
 export class UserShowPage extends Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
 
         this.state = {
-            user: {},
-            userPosts: [],
             expanded: true,
-            isLoading: true
         }
     }
 
@@ -34,28 +30,14 @@ export class UserShowPage extends Component {
         const expanded = !this.state.expanded
         this.setState({ expanded });
     };
-    componentDidMount = () => {
-        const id = this.props.match.params.id
-        Axios.get(USERS_URL + `/${id}`)
-            .then(response => {
-                this.setState({ user: response.data, isLoading: false }, () => {
-                    Axios.get(POSTS_URL)
-                        .then(response => {
-                            const userPosts = response.data.filter(post => post.userId === this.state.user.id)
-                            this.setState({ userPosts })
-                        })
-                })
-            })
-            .catch(err => {
-                alert(err)
-            })
-    }
+
 
     render() {
-        const { isLoading, user, userPosts } = this.state
+
+        const { isLoading, user, userPosts } = this.props
         return (
             <>
-                <Typography style={{ marginLeft: 20 }} variant="subtitle1" component="h2">User Show Page</Typography>
+                <Typography style={{ marginLeft: 20 }} variant="h5" >User Show Page</Typography>
                 {isLoading && <LinearProgress variant="query" color="primary" />}
                 <Card raised className={this.props.classes.UserShowCard}>
                     <CardHeader
@@ -85,10 +67,19 @@ export class UserShowPage extends Component {
                     </Collapse>
 
                 </Card>
+                <Button variant="contained" color="primary" style={{ marginLeft: 20, marginTop: 20 }} component={Link} to={`/users`}>Show All Users</Button>
             </>
         )
     }
 }
 
-export default withStyles(HOCStyles)(UserShowPage);
+const mapStatetoProps = (state, props) => {
+    return {
+        user: getUserByIdSelector(state.users.users, Number(props.match.params.id)),
+        userPosts: getUserPostsSelector(state.posts.posts, Number(props.match.params.id)),
+        isLoading: state.posts.loading || state.users.loading
+    }
+}
+
+export default connect(mapStatetoProps)(withStyles(HOCStyles)(UserShowPage))
 
